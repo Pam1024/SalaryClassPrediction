@@ -1,8 +1,19 @@
 # SalaryClassPrediction 预测工资水平项目
 背景： 根据一个人口普查的数据，判断这个人的工资收入水平是属于大于50K, 还是小于等于50k。原始数据文件存在某些数值丢失，数据拼写问题，错误数据问题。
 - 任务1：对数据进行探索、清洗、可视化展现
+        1.  读取数据
+        2.  探索数据，如最大值，最小值，平均值，std，数据量等
+        3.  处理丢失数据，数值错误数据，拼写错误的数据
+        4.  使用matplotlib绘制可视化直方图
+        
 - 任务2：数据预处理、使用多种机器学习分类算法对数据建模，比较各种模型的性能，选取最好的一个模型应用到新数据上做出分类预测
-
+        1.  将分类变量转换为数值变量或者进行离散编码get_dummies
+        2.  标准化数值 normalize
+        3.  使用DecisionTreeClassfier、KNeighborsClassifier、GaussianNB、MLPClassifier、SVC分类算法建模
+        4.  比较模型性能
+        5.  提高模型性能
+        6.  对新数据预测
+        
 成果： **项目整体预测率约82%，为班级第一，受到教授表扬奖励**
 
 ### 文件介绍
@@ -14,7 +25,7 @@
 6. class_prediction.csv 预测结果
 
 ## 任务1： 数据清洗
-### 1. *读取csv文件，保存成为pandas的dataframe*
+### 1. *读取 csv数据文件，保存成为pandas的dataframe*
 ```python
 # define the name of headers
 col_name = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
@@ -25,7 +36,7 @@ data = pd.read_csv('dataset1_dirty.csv',header=None,names = col_name)
 ### 2. *探索数据*
 - 查看数据格式
 
-![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/Z_data_format.PNG)
+![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_format.PNG)
 
 - 查看各feature的统计数值，对于数值特征查看其统计数值：如最大值、最小值、平均值、标准差。对于类别特征，查看其类别数量、各类别有多少数据。查看结果按照格式化打印
 ```python
@@ -79,7 +90,9 @@ data_clean2['age'].values[data_clean2['age'].values <=0] = np.mean(data_clean2['
 3. 清理拼写偏差的数据
    本文只论述对workclass的具体清理方法，education的清理类同，可参考代码。
    - 首先获取workclass的标准类别，参考人口普查给出的定义可得到workclass的标准值为：
+   
      `['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov', 'State-gov', 'Without-pay', 'Never-worked ']`
+     
    - 再利用Levenshtein这个package，去计算具体某个值离上述标准类别的相似程度，选出最相似的标准类别代替现在的值。例如localgov与上面8个标准类别对比后，与Local-gov最相似，就用Local-gov去代替localgov的值。
    
 ```python
@@ -150,9 +163,10 @@ persons = pd.read_csv('dataset1_processed.csv',header=None,names = col_name)
 ![Image of clean data](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_data.PNG)
 
 
-### 2. *convert categorical columns into multiple binary or numerical columns*
+### 2. *convert categorical columns into multiple binary or numerical columns 将分类变量转换为数值变量或者进行离散编码get_dummies*
 
-      -因为education这个特征的值是连续有序的，可以将其转化成数值
+  - 因为education这个特征的值是连续有序的，可以将其转化成数值
+      
 ```pyhton
 #refer to https://towardsdatascience.com/preprocessing-with-sklearn-a-complete-and-comprehensive-guide-670cb98fcfb9
 edu = pd.Categorical(persons['education'],categories=['Preschool','1st-4th','5th-6th','7th-8th','9th','10th','11th','12th','HS-grad','Prof-school','Assoc-acdm','Assoc-voc','Some-college','Bachelors','Masters','Doctorate'],ordered=True)
@@ -160,7 +174,7 @@ labels, unique = pd.factorize(edu, sort=True)
 persons['education'] = labels
 ```
 
-       - 其他分类变量的值是离散的，如'workclass','marital-status','occupation','relationship','race','sex','native-country'，可以 用get_dummies将其转化成multiple binary values
+   - 其他分类变量的值是离散的，如'workclass','marital-status','occupation','relationship','race','sex','native-country'，可以 用get_dummies将其转化成multiple binary values
  
  ```python
  #get all the data columns except target value 'salary' for get_dummies process
@@ -169,8 +183,8 @@ data = persons.loc[:, persons.columns != 'salary']
 # refer to https://towardsdatascience.com/encoding-categorical-features-21a2651a065c
 data_dummies = pd.get_dummies(data, prefix_sep='_', drop_first=True)
 ```
-       转化后的数据：
-       ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
+   转化后的数据：
+   ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
        
        
 ### 2. *Normalize Data数据标准化*
@@ -190,14 +204,15 @@ for col in data_numerical.columns:
  
  
 ### 3. *使用分类算法建模*
-      - 将数据分为traning set和 test set
+      
+   - 将数据分为traning set和 test set      
 ```python
 X = data_normalize
 y = persons['salary']
 X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3)
 ```
 
-      - 使用DecisionTreeClassfier、KNeighborsClassifier、GaussianNB、MLPClassifier、SVC这几个分类算法对数据建模，具体算法代码使用请参考clssification.ipynb
+   - 使用DecisionTreeClassfier、KNeighborsClassifier、GaussianNB、MLPClassifier、SVC这几个分类算法对数据建模，具体算法代码使用请参考clssification.ipynb
 ```
 #KNeighborsClassifier
 knc = KNeighborsClassifier()
@@ -211,13 +226,14 @@ predictions = knc.predict(X_test)
 knc_accuracy = accuracy_score(y_test, predictions)
 test_average_class_accuracy = average_class_accuracy(y_test, predictions)
 ```
-    - 5个分类算法的性能用matplotlib显示如下：
+### 4. *比较模型性能*   
+   - 5个分类算法的性能用matplotlib显示如下：
     
-      有图可知，对test data性能最好的是MLPClassifier，对training data性能最好的是DecisionTreeClassfier。
+     由图可知，对test data性能最好的是MLPClassifier，对training data性能最好的是DecisionTreeClassfier。
       
   
- ### 4. *提高模型性能*   
-     - 深入分析发现，预测 '<=50K'工资类别的准确率是0.92,  '>50K'工资类别准确率是 0.58。 查看两个工资类别的数据数量发现， '<=50K'的数据数量是21764, '>50K' 的数据数量只有7194。两个类别数据数量不平衡，于是补充'>50K' 的数据数量。
+ ### 5. *提高模型性能*   
+   - 深入分析发现，预测 '<=50K'工资类别的准确率是0.92,  '>50K'工资类别准确率是 0.58。 查看两个工资类别的数据数量发现， '<=50K'的数据数量是21764, '>50K' 的数据数量只有7194。两个类别数据数量不平衡，于是补充'>50K' 的数据数量。
      
 ```python
 #adding more samples with salary '>50K' to the dataset
@@ -229,11 +245,11 @@ data1 = data_complete.append(data_greater50K)
 data_new = data1.append(data_greater50K)
 data_new['salary'].value_counts()
 ```
-       补充后各类别数据如下图所示：
+   补充后各类别数据如下图所示：
              
-       图片
+     图片
        
-     - 对补充后的数据重新建模
+   - 对补充后的数据重新建模
 ```python
 # calculate the accuracy of the model prediction after renew the dataset 
 MLPC = MLPClassifier()
@@ -256,15 +272,15 @@ print('average_class_accuracy: ',average_class_accuracy)
    图片
    
    
-### 5. *对新数据预测*
-     — 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
+### 6. *对新数据预测*
+   — 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
      
 ```python
 # read the test data from csv file
 test_data = pd.read_csv('dataset1_test.csv',header=None,names = col_name)
 ```
-    - 数据处理的代码请参考clssification.ipynb，不再重复描述。
-    - 利用选好的模型对新数据预测，并把结果保存到文档里。
+  - 数据处理的代码请参考clssification.ipynb，不再重复描述。
+  - 利用选好的模型对新数据预测，并把结果保存到文档里。
     
  ```python
 #use the best model to predict the value
