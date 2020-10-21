@@ -60,7 +60,7 @@ while i < len(data.columns):
 ```
   部分打印结果如下图所示，可清楚了解到个feature的情况：
   
-  ![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_print_result.PNG)
+![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_print_result.PNG)
   
 - 通过上述数据探索，可以发现以下问题：
   1. 丢失数据： Workclass，Occupation特征存在‘？’的值
@@ -133,7 +133,7 @@ data_clean2['workclass']=data_clean2['workclass'].apply(lambda x: match(x,work_d
 ```
   - 清洗后结果
   
-   ![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_workclass.PNG)
+![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_workclass.PNG)
 
 ### 3. *数据可视化*
 
@@ -147,7 +147,7 @@ ax.set_ylabel('Frequency')
 ax.set_title("Age Histogram")
 ```
 
-  ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_age_histogram.PNG)
+![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_age_histogram.PNG)
      
 
 ## 任务2： 预测工资分类
@@ -165,7 +165,7 @@ persons = pd.read_csv('dataset1_processed.csv',header=None,names = col_name)
 ![Image of clean data](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_data.PNG)
 
 
-### 2. *convert categorical columns into multiple binary or numerical columns 将分类变量转换为数值变量或者进行离散编码get_dummies*
+### 2. *将分类变量转换为数值变量或者进行get_dummies离散编码 convert categorical columns into multiple binary or numerical columns *
 
   - 因为education这个特征的值是连续有序的，可以将其转化成数值
       
@@ -186,7 +186,7 @@ data = persons.loc[:, persons.columns != 'salary']
 data_dummies = pd.get_dummies(data, prefix_sep='_', drop_first=True)
 ```
    转化后的数据：
-   ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
+ ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
        
        
 ### 2. *Normalize Data数据标准化*
@@ -202,7 +202,7 @@ for col in data_numerical.columns:
     data_normalize[col] = y[0].tolist()   
 ```
 标准化后的数据：
-       ![Image of data normalize](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_normalize.PNG)
+ ![Image of data normalize](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_normalize.PNG)
  
  
 ### 3. *使用分类算法建模*
@@ -230,7 +230,8 @@ test_average_class_accuracy = average_class_accuracy(y_test, predictions)
 ```
 ### 4. *比较模型性能*   
    - 5个分类算法的性能用matplotlib显示如下：
-    
+     ![Image of performance](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/model_performance.PNG)
+     
      由图可知，对test data性能最好的是MLPClassifier，对training data性能最好的是DecisionTreeClassfier。
       
   
@@ -249,7 +250,7 @@ data_new['salary'].value_counts()
 ```
    补充后各类别数据如下图所示：
              
-     图片
+   ![Image of balance](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_balance.PNG)
        
    - 对补充后的数据重新建模
 ```python
@@ -271,7 +272,7 @@ print('average_class_accuracy: ',average_class_accuracy)
 ```
    -性能比之前提高，类别平均准确率从0.77提高到0.83
    
-   图片
+   ![Image of imporve](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_improve_performance.PNG)
    
    
 ### 6. *对新数据预测*
