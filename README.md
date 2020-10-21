@@ -25,7 +25,7 @@ data = pd.read_csv('dataset1_dirty.csv',header=None,names = col_name)
 
 ![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/Z_data_format.PNG)
 
-- 查看各feature的统计数值，对于数值特征查看其统计数值：如最大值、最小值、平均值、标准差。对于类别特征，查看其类别数量，各类别有多少数据。查看结果按照格式打印
+- 查看各feature的统计数值，对于数值特征查看其统计数值：如最大值、最小值、平均值、标准差。对于类别特征，查看其类别数量、各类别有多少数据。查看结果按照格式化打印
 ```python
 # better way to print
 print("rows: {}".format(len(data.index)))
@@ -43,7 +43,15 @@ while i < len(data.columns):
         
     i = i+1
 ```
-
+  部分打印结果如下图所示，可清洗了解到个feature的情况：
+  ![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_print_result.PNG)
+  
+- 通过上述数据探索，可以发现以下问题：
+  1. 丢失数据： Workclass，Occupation特征存在‘？’的值
+  2. 错误数据： Age特征存在负数的值
+  3. 拼写错误： Workclass，Occupation特征存在人为拼写错误，如Local-gov这个类别存在了多个人为拼写值，如local-gov，local gov，Localgov，Local gov，localgov等多种拼写方式。其实这几个值都是代表同一个东西，但是却出现了几个不同值，如果不清理，会被机器误认为是其他类别，就会造成模型不准确
+  
+  
 
 
 
