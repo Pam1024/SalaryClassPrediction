@@ -13,7 +13,7 @@
 
 ## 任务1： 数据预处理
 ### 1. 读取csv文件，保存成为pandas的dataframe
-```
+```python
 # define the name of headers
 col_name = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
 # read data from csv file
