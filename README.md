@@ -2,7 +2,9 @@
 背景： 根据一个人口普查的数据，判断这个人的工资收入水平是属于大于50K, 还是小于等于50k。原始数据文件已损坏，部分数据丢失，部分数据没有按照格式填写。
 - 任务1：对数据进行清洗、数据转换、预准备
 - 任务2：使用多种机器学习分类算法对数据建模，比较各种模型的性能，选取最好的一个模型应用到这个问题上
+
 成果： **项目整体预测率约80%，为班级第一，受到教授表扬奖励**
+
 ### 文件介绍
 1. data_dirty.csv 有脏数据的原始人口普查数据，3万+条数据
 2. data_preprocessing.ipynb 数据清洗代码文件
@@ -51,7 +53,7 @@ while i < len(data.columns):
   2. 错误数据： Age特征存在负数的值
   3. 拼写错误： Workclass，Occupation特征存在人为拼写错误，如Local-gov这个类别存在了多个人为拼写值，如local-gov，local gov，Localgov，Local gov，localgov等多种拼写方式。其实这几个值都是代表同一个东西，但是却出现了几个不同值，如果不清理，会被机器误认为是其他类别，就会造成模型不准确
   
-### 2. *数据清理*
+### 3. *数据清理*
 
 1. 清理值为‘？’的数据
    由于值‘？’的数据来自职业和工作类别特征，这些人口普查信息没有渠道再次核对获取，并且只有1000条左右数据含有丢失数据，对于3万多条原始数据不算特别多，所以将含有‘？’值得数据舍弃。
@@ -110,9 +112,23 @@ def match(x,dict):
 data_clean2['workclass']=data_clean2['workclass'].apply(lambda x: match(x,work_dict))
 ```
   - 清洗后结果
+  
    ![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_clean_workclass.PNG)
-   
 
+### 3. *数据可视化*
+- 使用matplotlib绘制清理后特征的直方图
+``` python
+fig, ax = plt.subplots(figsize=(10,5))
+N, bins, patches =ax.hist(data_clean2['age'],20,color='c',histtype='bar',ec='black')
+ax.set_xlabel('Age')
+ax.set_ylabel('Frequency')
+ax.set_title("Age Histogram")
+```
+
+     ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_age_histogram.PNG)
+     
+
+## 任务2： 预测工资分类
 
 
 
