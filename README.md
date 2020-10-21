@@ -9,7 +9,7 @@
         
 - 任务2：数据预处理、使用多种机器学习分类算法对数据建模，比较各种模型的性能，选取最好的一个模型应用到新数据上做出分类预测
 
-        1.  将分类变量转换为数值变量或者进行离散编码get_dummies
+        1.  将分类变量转换为数值变量或者进行get_dummies离散编码
         2.  标准化数值 normalize
         3.  使用DecisionTreeClassfier、KNeighborsClassifier、GaussianNB、MLPClassifier、SVC分类算法建模
         4.  比较模型性能
