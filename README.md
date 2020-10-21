@@ -1,5 +1,8 @@
 # SalaryClassPrediction 预测工资水平项目
 背景： 根据一个人口普查的数据，判断这个人的工资收入水平是属于大于50K, 还是小于等于50k。原始数据文件存在某些数值丢失，数据拼写问题，错误数据问题。
+
+成果： **项目整体预测率约82%，为班级第一，受到教授表扬奖励**
+
 - 任务1：对数据进行探索、清洗、可视化展现
 
         1.  读取数据
@@ -9,22 +12,21 @@
         
 - 任务2：数据预处理、使用多种机器学习分类算法对数据建模，比较各种模型的性能，选取最好的一个模型应用到新数据上做出分类预测
 
-        1.  将分类变量转换为数值变量或者进行离散编码get_dummies
+        1.  将分类变量转换为数值变量或者进行get_dummies离散编码
         2.  标准化数值 normalize
         3.  使用DecisionTreeClassfier、KNeighborsClassifier、GaussianNB、MLPClassifier、SVC分类算法建模
         4.  比较模型性能
         5.  提高模型性能
         6.  对新数据预测
         
-成果： **项目整体预测率约82%，为班级第一，受到教授表扬奖励**
+
 
 ### 文件介绍
-1. data_dirty.csv 有脏数据的原始人口普查数据，3万+条数据
-2. data_preprocessing.ipynb 数据清洗代码文件
-3. data_preprocessing.pdf 数据清洗英文报告
-4. clssification.ipynb 分类算法代码文件
-5. test_data.csv 待预测人口普查数据，1.5万+条数据
-6. class_prediction.csv 预测结果
+1. dataset1_dirty.csv 有脏数据的原始人口普查数据，3万+条数据
+2. data_preprocessing.ipynb 数据清洗代码
+3. clssification.ipynb 分类算法建模代码
+4. test_data.csv 待预测人口普查数据，1.5万+条数据
+5. class_prediction.csv 预测结果保存文件
 
 ## 任务1： 数据清洗
 ### 1. *读取 csv数据文件，保存成为pandas的dataframe*
@@ -60,7 +62,7 @@ while i < len(data.columns):
 ```
   部分打印结果如下图所示，可清楚了解到个feature的情况：
   
-  ![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_print_result.PNG)
+![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_print_result.PNG)
   
 - 通过上述数据探索，可以发现以下问题：
   1. 丢失数据： Workclass，Occupation特征存在‘？’的值
@@ -133,7 +135,7 @@ data_clean2['workclass']=data_clean2['workclass'].apply(lambda x: match(x,work_d
 ```
   - 清洗后结果
   
-   ![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_workclass.PNG)
+![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_workclass.PNG)
 
 ### 3. *数据可视化*
 
@@ -147,7 +149,7 @@ ax.set_ylabel('Frequency')
 ax.set_title("Age Histogram")
 ```
 
-  ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_age_histogram.PNG)
+![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_age_histogram.PNG)
      
 
 ## 任务2： 预测工资分类
@@ -165,7 +167,7 @@ persons = pd.read_csv('dataset1_processed.csv',header=None,names = col_name)
 ![Image of clean data](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_data.PNG)
 
 
-### 2. *convert categorical columns into multiple binary or numerical columns 将分类变量转换为数值变量或者进行离散编码get_dummies*
+### 2. *将分类变量转换为数值变量或者进行get_dummies离散编码 convert categorical columns into multiple binary or numerical columns *
 
   - 因为education这个特征的值是连续有序的，可以将其转化成数值
       
@@ -185,8 +187,8 @@ data = persons.loc[:, persons.columns != 'salary']
 # refer to https://towardsdatascience.com/encoding-categorical-features-21a2651a065c
 data_dummies = pd.get_dummies(data, prefix_sep='_', drop_first=True)
 ```
-   转化后的数据：
-   ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
+   - 转化后的数据：
+ ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
        
        
 ### 2. *Normalize Data数据标准化*
@@ -202,7 +204,7 @@ for col in data_numerical.columns:
     data_normalize[col] = y[0].tolist()   
 ```
 标准化后的数据：
-       ![Image of data normalize](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_normalize.PNG)
+ ![Image of data normalize](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_normalize.PNG)
  
  
 ### 3. *使用分类算法建模*
@@ -230,7 +232,8 @@ test_average_class_accuracy = average_class_accuracy(y_test, predictions)
 ```
 ### 4. *比较模型性能*   
    - 5个分类算法的性能用matplotlib显示如下：
-    
+     ![Image of performance](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/model_performance.PNG)
+     
      由图可知，对test data性能最好的是MLPClassifier，对training data性能最好的是DecisionTreeClassfier。
       
   
@@ -249,7 +252,7 @@ data_new['salary'].value_counts()
 ```
    补充后各类别数据如下图所示：
              
-     图片
+   ![Image of balance](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_balance.PNG)
        
    - 对补充后的数据重新建模
 ```python
@@ -269,13 +272,13 @@ print('less50class_accuracy: ',less50class_accuracy)
 print('greater50class_accuracy: ',greater50class_accuracy)
 print('average_class_accuracy: ',average_class_accuracy)
 ```
-   -性能比之前提高，类别平均准确率从0.77提高到0.83
+   - **性能比之前提高，类别平均准确率从0.77提高到0.83**
    
-   图片
+   ![Image of imporve](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_improve_performance.PNG)
    
    
 ### 6. *对新数据预测*
-   — 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
+   - 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
      
 ```python
 # read the test data from csv file
