@@ -272,7 +272,7 @@ print('less50class_accuracy: ',less50class_accuracy)
 print('greater50class_accuracy: ',greater50class_accuracy)
 print('average_class_accuracy: ',average_class_accuracy)
 ```
-   -性能比之前提高，类别平均准确率从0.77提高到0.83
+   - **性能比之前提高，类别平均准确率从0.77提高到0.83**
    
    ![Image of imporve](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_improve_performance.PNG)
    
