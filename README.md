@@ -12,7 +12,7 @@
 6. class_prediction.csv 预测结果
 
 ## 任务1： 数据预处理
-### 1. 读取csv文件，保存成为pandas的dataframe
+### 1. *读取csv文件，保存成为pandas的dataframe*
 ```python
 # define the name of headers
 col_name = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
@@ -20,9 +20,30 @@ col_name = ['age','workclass','fnlwgt','education','education-num','marital-stat
 data = pd.read_csv('dataset1_dirty.csv',header=None,names = col_name)
 ```
 
-### 2. 探索数据
+### 2. *探索数据*
+- 查看数据格式
 
 ![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/Z_data_format.PNG)
+
+- 查看各feature的统计数值，对于数值特征查看其统计数值：如最大值、最小值、平均值、标准差。对于类别特征，查看其类别数量，各类别有多少数据。查看结果按照格式打印
+```python
+# better way to print
+print("rows: {}".format(len(data.index)))
+i = 0
+while i < len(data.columns):
+    if(type(data.loc[0][i]) == np.int64):
+        print("{n}: min:{min}, mean:{mean}, max:{max}, std:{std}".format(n=data.columns[i],min=np.min(data.iloc[:,i]),mean=np.mean(data.iloc[:,i]),max=np.max(data.iloc[:,i]),std=np.std(data.iloc[:,i])))
+
+    else:
+        print("{n} : {count}".format(n=data.columns[i],count=data.iloc[:,i].nunique()))
+        # refer to https://stackoverflow.com/questions/34178751/extract-unique-values-and-number-of-occurrences-of-each-value-from-dataframe-col
+        uni_list = Counter(data.iloc[:,i])
+        for uni in uni_list:
+            print("  {}: {}".format(uni,uni_list[uni]))
+        
+    i = i+1
+```
+
 
 
 
