@@ -25,7 +25,7 @@ data = pd.read_csv('dataset1_dirty.csv',header=None,names = col_name)
 ### 2. *探索数据*
 - 查看数据格式
 
-![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/Z_data_format.PNG)
+![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/Z_data_format.PNG)
 
 - 查看各feature的统计数值，对于数值特征查看其统计数值：如最大值、最小值、平均值、标准差。对于类别特征，查看其类别数量、各类别有多少数据。查看结果按照格式化打印
 ```python
@@ -47,7 +47,7 @@ while i < len(data.columns):
 ```
   部分打印结果如下图所示，可清楚了解到个feature的情况：
   
-  ![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_print_result.PNG)
+  ![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_print_result.PNG)
   
 - 通过上述数据探索，可以发现以下问题：
   1. 丢失数据： Workclass，Occupation特征存在‘？’的值
@@ -118,7 +118,7 @@ data_clean2['workclass']=data_clean2['workclass'].apply(lambda x: match(x,work_d
 ```
   - 清洗后结果
   
-   ![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_clean_workclass.PNG)
+   ![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_workclass.PNG)
 
 ### 3. *数据可视化*
 
@@ -132,13 +132,14 @@ ax.set_ylabel('Frequency')
 ax.set_title("Age Histogram")
 ```
 
-  ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_age_histogram.PNG)
+  ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_age_histogram.PNG)
      
 
 ## 任务2： 预测工资分类
 
 ### 1. *加载上次已经清洗好的数据*
-```
+
+```python
 # define the name of headers
 col_name = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
 # read data from csv file
@@ -146,31 +147,136 @@ persons = pd.read_csv('dataset1_processed.csv',header=None,names = col_name)
 
 ```
 
-![Image of clean data](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_print_result.PNG)
+![Image of clean data](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_clean_data.PNG)
 
 
 ### 2. *convert categorical columns into multiple binary or numerical columns*
 
       -因为education这个特征的值是连续有序的，可以将其转化成数值
-```
+```pyhton
 #refer to https://towardsdatascience.com/preprocessing-with-sklearn-a-complete-and-comprehensive-guide-670cb98fcfb9
 edu = pd.Categorical(persons['education'],categories=['Preschool','1st-4th','5th-6th','7th-8th','9th','10th','11th','12th','HS-grad','Prof-school','Assoc-acdm','Assoc-voc','Some-college','Bachelors','Masters','Doctorate'],ordered=True)
 labels, unique = pd.factorize(edu, sort=True)
 persons['education'] = labels
 ```
 
-       -其他分类变量的值是离散的，如'workclass','marital-status','occupation','relationship','race','sex','native-country'，可以 用get_dummies将其转化成multiple binary values
+       - 其他分类变量的值是离散的，如'workclass','marital-status','occupation','relationship','race','sex','native-country'，可以 用get_dummies将其转化成multiple binary values
  
- ```
+ ```python
  #get all the data columns except target value 'salary' for get_dummies process
 data = persons.loc[:, persons.columns != 'salary']
 # use get_dummies method to convert other categorial features to binary values
 # refer to https://towardsdatascience.com/encoding-categorical-features-21a2651a065c
 data_dummies = pd.get_dummies(data, prefix_sep='_', drop_first=True)
+```
+       转化后的数据：
+       ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
+       
+       
+### 2. *Normalize Data数据标准化*
 
+```python
+# retrive all the numerical columns
+data_numerical = data_dummies[['age','fnlwgt','education','education-num','capital-gain','capital-loss','hours-per-week']]
+data_normalize = data_dummies
+# normalize every numerical columns in for loop using normalize() method
+for col in data_numerical.columns:
+    x = np.array(data_numerical[col])
+    y = normalize([x]) 
+    data_normalize[col] = y[0].tolist()   
+```
+标准化后的数据：
+       ![Image of data normalize](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_data_normalize.PNG)
+ 
+ 
+### 3. *使用分类算法建模*
+      - 将数据分为traning set和 test set
+```python
+X = data_normalize
+y = persons['salary']
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.3)
+```
 
+      - 使用DecisionTreeClassfier、KNeighborsClassifier、GaussianNB、MLPClassifier、SVC这几个分类算法对数据建模，具体算法代码使用请参考clssification.ipynb
+```
+#KNeighborsClassifier
+knc = KNeighborsClassifier()
+knc.fit(X_train,y_train)
+#accuracy on train data 
+train_pre = knc.predict(X_train)
+train_accuracy = accuracy_score(y_train, train_pre)
+train_average_class_accuracy = average_class_accuracy(y_train, train_pre)
+#accuracy on test data
+predictions = knc.predict(X_test)
+knc_accuracy = accuracy_score(y_test, predictions)
+test_average_class_accuracy = average_class_accuracy(y_test, predictions)
+```
+    - 5个分类算法的性能用matplotlib显示如下：
+    
+      有图可知，对test data性能最好的是MLPClassifier，对training data性能最好的是DecisionTreeClassfier。
+      
+  
+ ### 4. *提高模型性能*   
+     - 深入分析发现，预测 '<=50K'工资类别的准确率是0.92,  '>50K'工资类别准确率是 0.58。 查看两个工资类别的数据数量发现， '<=50K'的数据数量是21764, '>50K' 的数据数量只有7194。两个类别数据数量不平衡，于是补充'>50K' 的数据数量。
+     
+```python
+#adding more samples with salary '>50K' to the dataset
+data_complete = data_normalize
+data_complete['salary'] = persons['salary']
+data_complete.head()
+data_greater50K = data_complete[data_complete['salary'] == '>50K']
+data1 = data_complete.append(data_greater50K)
+data_new = data1.append(data_greater50K)
+data_new['salary'].value_counts()
+```
+       补充后各类别数据如下图所示：
+             
+       图片
+       
+     - 对补充后的数据重新建模
+```python
+# calculate the accuracy of the model prediction after renew the dataset 
+MLPC = MLPClassifier()
+MLPC.fit(X_train,y_train)
+prediction = MLPC.predict(X_test)
+cm = confusion_matrix(y_test, prediction, labels=['<=50K','>50K'])
+tp = cm[0][0]
+tn = cm[1][1]
+less50class = np.sum(cm[0])
+greater50class = np.sum(cm[1])
+less50class_accuracy = tp/less50class
+greater50class_accuracy = tn/greater50class
+average_class_accuracy = (less50class_accuracy+greater50class_accuracy)/2
+print('less50class_accuracy: ',less50class_accuracy)
+print('greater50class_accuracy: ',greater50class_accuracy)
+print('average_class_accuracy: ',average_class_accuracy)
+```
+   -性能比之前提高，类别平均准确率从0.77提高到0.83
+   
+   图片
+   
+   
+### 5. *对新数据预测*
+     — 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
+     
+```python
+# read the test data from csv file
+test_data = pd.read_csv('dataset1_test.csv',header=None,names = col_name)
+```
+    - 数据处理的代码请参考clssification.ipynb，不再重复描述。
+    - 利用选好的模型对新数据预测，并把结果保存到文档里。
+    
+ ```python
+#use the best model to predict the value
+prediction = MLPC.predict(data_normalize)
+# change the result array to dataframe in order to save to the file 'B00809814_prediction.csv'
+predict_data = pd.DataFrame(prediction)
+predict_data.to_csv('prediction.csv',index=False,header=False)
+```
 
+    
 
+     
 
 
 
