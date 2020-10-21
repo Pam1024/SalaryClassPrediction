@@ -185,7 +185,7 @@ data = persons.loc[:, persons.columns != 'salary']
 # refer to https://towardsdatascience.com/encoding-categorical-features-21a2651a065c
 data_dummies = pd.get_dummies(data, prefix_sep='_', drop_first=True)
 ```
-   转化后的数据：
+   - 转化后的数据：
  ![Image of data convert](https://github.com/Pam1024/SalaryClassPrediction/blob/main/image/z_get_dummy.PNG)
        
        
@@ -276,7 +276,7 @@ print('average_class_accuracy: ',average_class_accuracy)
    
    
 ### 6. *对新数据预测*
-   — 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
+   - 从文件中读取新数据，进行categorical变量转化，离散编码get_dummies,再利用上面的MLPClassifier模型进行预测。
      
 ```python
 # read the test data from csv file
