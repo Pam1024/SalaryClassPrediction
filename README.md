@@ -45,7 +45,8 @@ while i < len(data.columns):
         
     i = i+1
 ```
-  部分打印结果如下图所示，可清洗了解到个feature的情况：
+  部分打印结果如下图所示，可清楚了解到个feature的情况：
+  
   ![Image of features](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_print_result.PNG)
   
 - 通过上述数据探索，可以发现以下问题：
@@ -56,7 +57,9 @@ while i < len(data.columns):
 ### 3. *数据清理*
 
 1. 清理值为‘？’的数据
-   由于值‘？’的数据来自职业和工作类别特征，这些人口普查信息没有渠道再次核对获取，并且只有1000条左右数据含有丢失数据，对于3万多条原始数据不算特别多，所以将含有‘？’值得数据舍弃。
+
+   由于值‘？’的数据来自职业和工作类别特征，这些人口普查信息没有渠道再次核对获取，并且只有1000条左右数据含有丢失数据，对于3万多条原始数据不算特别多，所以将含有‘？’值的数据舍弃。
+   
 ```python
    # delete the row with the value ?
 data_clean1 = data[data['workclass'] != '?']
@@ -64,6 +67,7 @@ data_clean2 = data_clean1[data_clean1['occupation'] != '?']
 ```
 
 2. 清理年龄为负数的数据
+
    年龄是数值数据，采用数据的平均值去替代负数的数据
 ```python
 """     the column age has bad data
@@ -77,6 +81,7 @@ data_clean2['age'].values[data_clean2['age'].values <=0] = np.mean(data_clean2['
    - 首先获取workclass的标准类别，参考人口普查给出的定义可得到workclass的标准值为：
      `['Private', 'Self-emp-not-inc', 'Self-emp-inc', 'Federal-gov', 'Local-gov', 'State-gov', 'Without-pay', 'Never-worked ']`
    - 再利用Levenshtein这个package，去计算具体某个值离上述标准类别的相似程度，选出最相似的标准类别代替现在的值。例如localgov与上面8个标准类别对比后，与Local-gov最相似，就用Local-gov去代替localgov的值。
+   
 ```python
 #clean the bad data for column workclass
 #use the previous unique values to match the right one
@@ -116,7 +121,9 @@ data_clean2['workclass']=data_clean2['workclass'].apply(lambda x: match(x,work_d
    ![Image of cleaning](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_clean_workclass.PNG)
 
 ### 3. *数据可视化*
+
 - 使用matplotlib绘制清理后特征的直方图
+
 ``` python
 fig, ax = plt.subplots(figsize=(10,5))
 N, bins, patches =ax.hist(data_clean2['age'],20,color='c',histtype='bar',ec='black')
@@ -125,7 +132,7 @@ ax.set_ylabel('Frequency')
 ax.set_title("Age Histogram")
 ```
 
-     ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_age_histogram.PNG)
+  ![Image of age histogram](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_age_histogram.PNG)
      
 
 ## 任务2： 预测工资分类
