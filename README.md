@@ -22,6 +22,9 @@ data = pd.read_csv('dataset1_dirty.csv',header=None,names = col_name)
 
 ### 2. 探索数据
 
+![Image of Data Format](https://github.com/Pam1024/SalaryClassPrediction/blob/main/Z_data_format.PNG)
+
+
 
 
 
