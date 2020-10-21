@@ -1,7 +1,7 @@
 # SalaryClassPrediction 预测工资水平项目
 背景： 根据一个人口普查的数据，判断这个人的工资收入水平是属于大于50K, 还是小于等于50k。原始数据文件已损坏，部分数据丢失，部分数据没有按照格式填写。
-- 任务1：对数据进行清洗、数据转换、预准备
-- 任务2：使用多种机器学习分类算法对数据建模，比较各种模型的性能，选取最好的一个模型应用到这个问题上
+- 任务1：对数据进行探索、清洗、可视化展现
+- 任务2：数据预处理、使用多种机器学习分类算法对数据建模，比较各种模型的性能，选取最好的一个模型应用到这个问题上
 
 成果： **项目整体预测率约80%，为班级第一，受到教授表扬奖励**
 
@@ -13,7 +13,7 @@
 5. test_data.csv 待预测人口普查数据，1.5万+条数据
 6. class_prediction.csv 预测结果
 
-## 任务1： 数据预处理
+## 任务1： 数据清洗
 ### 1. *读取csv文件，保存成为pandas的dataframe*
 ```python
 # define the name of headers
@@ -136,6 +136,40 @@ ax.set_title("Age Histogram")
      
 
 ## 任务2： 预测工资分类
+
+### 1. *加载上次已经清洗好的数据*
+```
+# define the name of headers
+col_name = ['age','workclass','fnlwgt','education','education-num','marital-status','occupation','relationship','race','sex','capital-gain','capital-loss','hours-per-week','native-country','salary']
+# read data from csv file
+persons = pd.read_csv('dataset1_processed.csv',header=None,names = col_name)
+
+```
+
+![Image of clean data](https://github.com/Pam1024/SalaryClassPrediction/blob/main/z_print_result.PNG)
+
+
+### 2. *convert categorical columns into multiple binary or numerical columns*
+
+      -因为education这个特征的值是连续有序的，可以将其转化成数值
+```
+#refer to https://towardsdatascience.com/preprocessing-with-sklearn-a-complete-and-comprehensive-guide-670cb98fcfb9
+edu = pd.Categorical(persons['education'],categories=['Preschool','1st-4th','5th-6th','7th-8th','9th','10th','11th','12th','HS-grad','Prof-school','Assoc-acdm','Assoc-voc','Some-college','Bachelors','Masters','Doctorate'],ordered=True)
+labels, unique = pd.factorize(edu, sort=True)
+persons['education'] = labels
+```
+
+       -其他分类变量的值是离散的，如'workclass','marital-status','occupation','relationship','race','sex','native-country'，可以 用get_dummies将其转化成multiple binary values
+ 
+ ```
+ #get all the data columns except target value 'salary' for get_dummies process
+data = persons.loc[:, persons.columns != 'salary']
+# use get_dummies method to convert other categorial features to binary values
+# refer to https://towardsdatascience.com/encoding-categorical-features-21a2651a065c
+data_dummies = pd.get_dummies(data, prefix_sep='_', drop_first=True)
+
+
+
 
 
 
